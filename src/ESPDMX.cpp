@@ -1,65 +1,58 @@
-/**
- * DMXESP - An interface to use ESP8266 as DMX controller
- */
+// - - - - -
+// ESPDMX - A Arduino library for sending and receiving DMX using the builtin serial hardware port.
+// ESPDMX.cpp: Library implementation file
+//
+// Copyright (C) 2015  Rick <ricardogg95@gmail.com>
+// This work is licensed under a GNU style license. 
+//
+// Last change: Marcel Seerig <https://github.com/mseerig>
+//
+// Documentation and samples are available at https://github.com/Rickgg/ESP-Dmx
+// - - - - -
 
 /* ----- LIBRARIES ----- */
 #include <Arduino.h>
 #include "ESPDMX.h"
-#include "HardwareSerial.h"
 
-extern "C" {
-  #include "eagle_soc.h"
-}
+#define dmxMaxChannel  512
 
-#define dmxMaxChannel 512
-#define PIN2 PERIPHS_IO_MUX_GPIO2_U
-#define GPIO2 FUNC_GPIO2
-#define UART1 FUNC_U1TXD_BK
+#define DMXSPEED       250000
+#define DMXFORMAT      SERIAL_8N2
+#define BREAKSPEED     83333
+#define BREAKFORMAT    SERIAL_8N1
 
-//#define UART_TX_FIFO_SIZE 0x01
-
-static int MaxChannel = 16; //Default to sending first 16 channels
-#define DmxSpeed 250000
-#define DataFormat SERIAL_8N2
-
-#define DMXControlPin 0
-
-static uint8_t dmxStarted = 0;
-
-volatile int dmxChannel = 0; //Next channel byte to be sent
-volatile int dmxMaxChan = 32; //Last channel used for sending
+bool dmxStarted = false;
+int sendPin = 2;		//dafault on ESP8266
 
 //DMX value array. Entry 0 will hold startbyte
-volatile uint8_t dmxData[dmxMaxChannel + 1];
+uint8_t dmxData[dmxMaxChannel + 1];
 
 DMXESPSerial DMXSerial;
 
+// Set up the DMX-Protocol
 void DMXESPSerial::init() {
-  //Initialize Values Buffer
+  //Initialize buffer with zero
   for (int iR=0; iR < dmxMaxChannel; iR++) {
     dmxData[iR] = 0;
   }
-  Serial1.begin(DmxSpeed, DataFormat);
-  PIN_FUNC_SELECT(PIN2, GPIO2);
-  GPOC = (1 << 2);
+  Serial1.begin(DMXSPEED);
+  pinMode(sendPin, OUTPUT);
+  dmxStarted = true;
 }
 
-void DMXESPSerial::maxChannel(int Channel) {
-  if (dmxStarted == 0) init();
-  if (Channel < 1) Channel = 1;
-  if (Channel > dmxMaxChannel) return;
-  dmxMaxChan = Channel;
-}
-
+// Function to read DMX data
 uint8_t DMXESPSerial::read(int Channel) {
-  if (dmxStarted == 0) init();
+  if (dmxStarted == false) init();
+  
   if (Channel < 1) Channel = 1;
   if (Channel > dmxMaxChannel) Channel = dmxMaxChannel;
   return(dmxData[Channel]);
 }
 
+// Function to send DMX data
 void DMXESPSerial::write(int Channel, uint8_t value) {
-  if (dmxStarted == 0) init();
+  if (dmxStarted == false) init();
+  
   if (Channel < 1) Channel = 1;
   if (Channel > dmxMaxChannel) Channel = dmxMaxChannel;
   if (value < 0) value = 0;
@@ -68,21 +61,19 @@ void DMXESPSerial::write(int Channel, uint8_t value) {
   dmxData[Channel] = value;
 }
 
+// Function to update the DMX bus
 void DMXESPSerial::update() {
+  if (dmxStarted == false) init();
+  
   //Send break
-  GPOS = (1 << 2);
-  delayMicroseconds(120);
-  GPOC = (1 << 2);
-  delayMicroseconds(12);
-
-  PIN_FUNC_SELECT(PIN2, UART1);
+  digitalWrite(sendPin, HIGH);
+  Serial1.begin(BREAKSPEED, BREAKFORMAT);
   Serial1.write(0);
   Serial1.flush();
-  for (int iR = 0; iR < dmxMaxChan; iR++){
-    Serial1.write(dmxData[iR]);
-    Serial1.flush();
-  }
-  delay(1);
-  PIN_FUNC_SELECT(PIN2, GPIO2);
-  GPOC = (1 << 2);
+  
+  //send data
+  Serial1.begin(DMXSPEED, DMXFORMAT);
+  digitalWrite(sendPin, LOW);
+  Serial1.write(dmxData, sizeof(dmxData));
+  Serial1.flush();
 }

@@ -7,7 +7,7 @@ For more information about this library please visit us at
 
 == License ==
 
- Copyright (C) 2015  Marcel Seerig
+ Copyright (C) 2015  Rick <ricardogg95@gmail.com> (edited by Marcel Seerig)
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

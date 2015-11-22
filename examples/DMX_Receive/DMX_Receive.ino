@@ -1,54 +1,26 @@
+// - - - - -
+// ESPDMX - A Arduino library for sending and receiving DMX using the builtin serial hardware port.
+//
+// Copyright (C) 2015  Rick <ricardogg95@gmail.com> (edited by Marcel Seerig)
+// This work is licensed under a GNU style license.
+//
+// Last change: Marcel Seerig <https://github.com/mseerig>
+//
+// Documentation and samples are available at https://github.com/Rickgg/ESP-Dmx
+// - - - - -
+
 #include <ESPDMX.h>
 
 DMXESPSerial dmx;
 
 void setup() {
-  // put your setup code here, to run once:
-  dmx.init();
-  delay(200);
-  pinMode(2, OUTPUT);
+  Serial.begin(9600);
+  dmx.init();               // initialization
+  delay(200);               // wait a while (not necessary)
 }
 
 void loop() {
-  
-  /**
-      dmx.write(1, 200);
-      dmx.write(2, 200);
-      dmx.write(3, 200);
-
-      dmx.update();
-      delay(1000);
-
-      dmx.write(1, 0);
-      dmx.write(2, 0);
-      dmx.write(3, 0);
-
-      dmx.update();
-      delay(1000);
-      */
-
-  digitalWrite(2, LOW);
-  delayMicroseconds(88);
-  
-  digitalWrite(2, HIGH);
-  delayMicroseconds(8);
-
-  digitalWrite(2, LOW);
-  delayMicroseconds(32);
-  digitalWrite(2, HIGH);
-  delayMicroseconds(8);
-
-  for (int i = 0; i < 511; i++) {
-      digitalWrite(2, LOW);
-      delayMicroseconds(4);
-      digitalWrite(2, HIGH);
-      delayMicroseconds(32);
-      digitalWrite(2, LOW);
-      digitalWrite(2, HIGH);
-      delayMicroseconds(8);
-  }
-  
-  
-  digitalWrite(2, HIGH);
-  delay(1);
+  dmx.update();             // update the DMX bus
+  int data = dmx.read(1);   // data from channel 1
+  Serial.println(data);     // print it out
 }

@@ -1,8 +1,10 @@
 = DMX Library for Arduino with ESP8266 =
 
-The DMX library allows send and receive data from Serial1 in DMX format.
+The DMX library allows sending data from Serial1 in DMX format.
 
-For more information about this library please visit us at
+For more information about this library please visit us at https://github.com/Rickgg/ESP-Dmx
+
+This Library is still a work in progress.
 
 
 == License ==
@@ -13,11 +15,9 @@ For more information about this library please visit us at
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
     You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.

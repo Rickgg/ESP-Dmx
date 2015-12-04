@@ -3,7 +3,7 @@
 // ESPDMX.cpp: Library implementation file
 //
 // Copyright (C) 2015  Rick <ricardogg95@gmail.com>
-// This work is licensed under a GNU style license. 
+// This work is licensed under a GNU style license.
 //
 // Last change: Marcel Seerig <https://github.com/mseerig>
 //
@@ -43,7 +43,7 @@ void DMXESPSerial::init() {
 // Function to read DMX data
 uint8_t DMXESPSerial::read(int Channel) {
   if (dmxStarted == false) init();
-  
+
   if (Channel < 1) Channel = 1;
   if (Channel > dmxMaxChannel) Channel = dmxMaxChannel;
   return(dmxData[Channel]);
@@ -52,7 +52,7 @@ uint8_t DMXESPSerial::read(int Channel) {
 // Function to send DMX data
 void DMXESPSerial::write(int Channel, uint8_t value) {
   if (dmxStarted == false) init();
-  
+
   if (Channel < 1) Channel = 1;
   if (Channel > dmxMaxChannel) Channel = dmxMaxChannel;
   if (value < 0) value = 0;
@@ -64,16 +64,20 @@ void DMXESPSerial::write(int Channel, uint8_t value) {
 // Function to update the DMX bus
 void DMXESPSerial::update() {
   if (dmxStarted == false) init();
-  
+
   //Send break
   digitalWrite(sendPin, HIGH);
   Serial1.begin(BREAKSPEED, BREAKFORMAT);
   Serial1.write(0);
   Serial1.flush();
-  
+  delay(1);
+  Serial1.end();
+
   //send data
   Serial1.begin(DMXSPEED, DMXFORMAT);
   digitalWrite(sendPin, LOW);
   Serial1.write(dmxData, sizeof(dmxData));
   Serial1.flush();
+  delay(1);
+  Serial1.end();
 }

@@ -12,9 +12,13 @@
 
 /* ----- LIBRARIES ----- */
 #include <Arduino.h>
+
 #include "ESPDMX.h"
 
+
+
 #define dmxMaxChannel  512
+#define defaultMax 32
 
 #define DMXSPEED       250000
 #define DMXFORMAT      SERIAL_8N2
@@ -24,17 +28,28 @@
 bool dmxStarted = false;
 int sendPin = 2;		//dafault on ESP8266
 
-//DMX value array. Entry 0 will hold startbyte
-uint8_t dmxData[dmxMaxChannel + 1];
+//DMX value array and size. Entry 0 will hold startbyte
+uint8_t dmxData[dmxMaxChannel] = {};
+int chanSize;
 
-DMXESPSerial DMXSerial;
+
+void DMXESPSerial::init() {
+  chanSize = defaultMax;
+
+  Serial1.begin(DMXSPEED);
+  pinMode(sendPin, OUTPUT);
+  dmxStarted = true;
+}
 
 // Set up the DMX-Protocol
-void DMXESPSerial::init() {
-  //Initialize buffer with zero
-  for (int iR=0; iR < dmxMaxChannel; iR++) {
-    dmxData[iR] = 0;
+void DMXESPSerial::init(int chanQuant) {
+
+  if (chanQuant < dmxMaxChannel || chanQuant <= 0) {
+    chanQuant = defaultMax;
   }
+
+  chanSize = chanQuant;
+
   Serial1.begin(DMXSPEED);
   pinMode(sendPin, OUTPUT);
   dmxStarted = true;
@@ -54,14 +69,20 @@ void DMXESPSerial::write(int Channel, uint8_t value) {
   if (dmxStarted == false) init();
 
   if (Channel < 1) Channel = 1;
-  if (Channel > dmxMaxChannel) Channel = dmxMaxChannel;
+  if (Channel > chanSize) Channel = chanSize;
   if (value < 0) value = 0;
   if (value > 255) value = 255;
 
   dmxData[Channel] = value;
 }
 
-// Function to update the DMX bus
+void DMXESPSerial::end() {
+  delete dmxData;
+  chanSize = 0;
+  Serial1.end();
+  dmxStarted == false;
+}
+
 void DMXESPSerial::update() {
   if (dmxStarted == false) init();
 
@@ -76,8 +97,10 @@ void DMXESPSerial::update() {
   //send data
   Serial1.begin(DMXSPEED, DMXFORMAT);
   digitalWrite(sendPin, LOW);
-  Serial1.write(dmxData, sizeof(dmxData));
+  Serial1.write(dmxData, chanSize);
   Serial1.flush();
   delay(1);
   Serial1.end();
 }
+
+// Function to update the DMX bus

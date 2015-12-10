@@ -3,26 +3,29 @@
 // ESPDMX.cpp: Library implementation file
 //
 // Copyright (C) 2015  Rick <ricardogg95@gmail.com>
-// This work is licensed under a GNU style license. 
+// This work is licensed under a GNU style license.
 //
 // Last change: Marcel Seerig <https://github.com/mseerig>
 //
 // Documentation and samples are available at https://github.com/Rickgg/ESP-Dmx
 // - - - - -
 
+#include <inttypes.h>
+
+
 #ifndef ESPDMX_h
 #define ESPDMX_h
-
-#include <inttypes.h>
 
 // ---- Methods ----
 
 class DMXESPSerial {
 public:
-  void init(); 
+  void init();
+  void init(int MaxChan);
   uint8_t read(int Channel);
-  void write(int channel, uint8_t value); //Write a value to a specific channel
+  void write(int channel, uint8_t value);
   void update();
+  void end();
 };
 
 #endif

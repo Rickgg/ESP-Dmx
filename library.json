@@ -1,0 +1,12 @@
+{
+    "name": "ESPDMX",
+    "keywords": "DMX, controller, remote",
+    "description": "Control DMX lights with an ESP8266",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/Rickgg/ESP-Dmx.git"
+    },
+    "frameworks": "arduino",
+    "platforms": "espressif"
+}

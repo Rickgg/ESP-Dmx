@@ -4,8 +4,6 @@ The DMX library allows sending data from Serial1 in DMX format.
 
 For more information about this library please visit us at https://github.com/Rickgg/ESP-Dmx
 
-This Library is still a work in progress.
-
 
 == License ==
 

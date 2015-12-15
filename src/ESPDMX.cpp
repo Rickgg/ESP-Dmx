@@ -44,7 +44,7 @@ void DMXESPSerial::init() {
 // Set up the DMX-Protocol
 void DMXESPSerial::init(int chanQuant) {
 
-  if (chanQuant < dmxMaxChannel || chanQuant <= 0) {
+  if (chanQuant > dmxMaxChannel || chanQuant <= 0) {
     chanQuant = defaultMax;
   }
 

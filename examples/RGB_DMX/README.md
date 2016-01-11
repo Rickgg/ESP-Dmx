@@ -1,4 +1,4 @@
-= RGB DMX example =
+# RGB DMX example #
 
 This example implements a web interface based on websockets and allows user to enter the channel and set RGB values, sent on the configured channel and two sequential ones as per general implementation practice in DMX.
 

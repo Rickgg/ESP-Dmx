@@ -97,8 +97,10 @@ void DMXESPSerial::update() {
   //send data
   Serial1.begin(DMXSPEED, DMXFORMAT);
   digitalWrite(sendPin, LOW);
-  Serial1.write(dmxData, chanSize);
-  Serial1.flush();
+  for (i = 0; i < chanSize) {
+    Serial1.write(dmxData[i]);
+    Serial1.flush();
+  }
   delay(1);
   Serial1.end();
 }

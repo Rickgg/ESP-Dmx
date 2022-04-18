@@ -55,6 +55,22 @@ void DMXESPSerial::init(int chanQuant) {
   dmxStarted = true;
 }
 
+// Set up the DMX-Protocol
+void DMXESPSerial::init(int chanQuant, int outputPin) {
+
+  sendPin = outputPin;
+
+  if (chanQuant > dmxMaxChannel || chanQuant <= 0) {
+    chanQuant = defaultMax;
+  }
+
+  chanSize = chanQuant;
+
+  Serial1.begin(DMXSPEED);
+  pinMode(sendPin, OUTPUT);
+  dmxStarted = true;
+}
+
 // Function to read DMX data
 uint8_t DMXESPSerial::read(int Channel) {
   if (dmxStarted == false) init();

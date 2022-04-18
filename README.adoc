@@ -11,7 +11,7 @@ To use, download and move the folder to your `Arduino/libraries` location, and r
 
 = API =
 
-* `init(channels)` Starts the DMX library with Serial1. If no channels are given, defaults to 32.
+* `init(channels, outputPin)` Starts the DMX library with Serial1. If no channels are given, defaults to 32. Optional outputPin, defaults Pin 2. If 
 * `write(channel, value)` Writes a value to DMX buffer.
 * `update()` Calls for the DMX buffer to be sent. Currently, it has to be called inside the main loop.
 * `end()` Ends ESPDMX controller.
